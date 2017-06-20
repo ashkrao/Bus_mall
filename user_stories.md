@@ -3,12 +3,12 @@
 ### Marketing research team
 1. As a researcher, I would like to identify which products are most likely to be purchased.
 2. As a researcher, I want the product selection process to be unbiased.
-3. As a researcher, I want to know which products were picked the most.
+3. As a researcher, I want to know which products were picked the most number of times.
 4. As a researcher, I want to know the percentage of times a product was selected when it was shown.
 5. As a researcher, I need to have a large enough set of data to draw conclusions on what products are likely to be purchased.
 
 ### Developer
-1. As a developer, I want to present the product images in a random way without repetition either in a set or between consequent sets.
+1. As a developer, I want to present the product images in a random way without repetition either in a set or between consecutive sets.
 2. As a developer, I want to track how many times each image is shown and how many times each image is clicked.
 3. As a developer, I must ensure that the images are picked randomly.
 4. As a developer, I need to display the calculated statistics visually.
