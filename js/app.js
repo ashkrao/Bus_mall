@@ -2,8 +2,9 @@
 
 var images = ['bag.jpg', 'banana.jpg', 'bathroom.jpg', 'boots.jpg', 'breakfast.jpg', 'bubblegum.jpg', 'chair.jpg', 'cthulhu.jpg','dog-duck.jpg','dragon.jpg','pen.jpg','pet-sweep.jpg','scissors.jpg','shark.jpg','sweep.png','tauntaun.jpg','unicorn.jpg','usb.gif','water-can.jpg','wine-glass.jpg'];
 var busMallItems = [];
-var busMallImagesParent = document.getElementById('busmallImagesParent');
-var showCount = 0;
+var backupItems = [];
+
+var showCount = 25;
 
 // Store constructor
 function Item (name, shown, clicked) {
@@ -20,38 +21,70 @@ function setup () {
 
 setup();
 
-function showItemSet() {
-  showCount++;
+function imageClick(event) {
+  var picked = event.target.getAttribute('id');
+  event.preventDefault();
 
-  var item1 = generateRandomItem();
-  var item2 = generateRandomItem();
-  var item3 = generateRandomItem();
+  for(var i = 0; i < backupItems.length; i++) {
+    if(backupItems[i].name == picked) {
+      backupItems[i].clicked++;
+      if(showCount == 1)
+      {
+        event.stopPropagation();
+      } else {
+        showItemSet();
+      }
+    }
+  }
+}
+
+function renderBusMallImages (busMallItem) {
+  var busMallImagesParent = document.getElementById('busMallImagesParent');
+  var img = document.createElement('img');
+  img.setAttribute('src', 'images/' + busMallItem.name);
+  img.setAttribute('width','30%');
+  img.setAttribute('id', busMallItem.name);
+  img.addEventListener('click', imageClick);
+  busMallImagesParent.append(img);
+
+  busMallItem.shown++;
+}
+
+function pickRandomItem () {
+  var index = Math.floor(Math.random() * busMallItems.length);
+  return busMallItems[index];
+}
+
+function showItemSet() {
+  showCount--;
+  document.getElementById('remaining').innerHTML = showCount;
+
+  var item1 = pickRandomItem();
+  busMallItems.splice(busMallItems.indexOf(item1), 1);
+  var item2 = pickRandomItem();
+  busMallItems.splice(busMallItems.indexOf(item2), 1);
+  var item3 = pickRandomItem();
+  busMallItems.splice(busMallItems.indexOf(item3), 1);
+
+  var busMallImagesParent = document.getElementById('busMallImagesParent');
+  busMallImagesParent.innerHTML = '';
 
   renderBusMallImages(item1);
   renderBusMallImages(item2);
   renderBusMallImages(item3);
+
+  for(var i = 0; i < backupItems.length ; i++) {
+    busMallItems.push(backupItems[i]);
+  }
+
+  backupItems[0] = item1;
+  backupItems[1] = item2;
+  backupItems[2] = item3;
 }
 
 showItemSet();
 
-busmallImagesParent.addEventListener('click', function (event) {
-  var picked = event.target.getAttribute('id');
-
-  for(var i = 0; i < busMallItems.length; i++) {
-    if(busMallItems[i].name == picked) {
-      busMallItems[i].clicked++;
-    }
-  }
-});
-
-function generateRandomItem () {
-  var index = Math.floor(Math.random() * busMallItems.length);
-  return busMallItems[index].name;
-}
-
-function renderBusMallImages (busmallItems) {
-  var img = document.createElement('img');
-  img.setAttribute('src', 'images/' + busmallItems);
-  img.setAttribute('id', busmallItems);
-  busMallImagesParent.append(img);
-}
+// function chart () {
+//   var canvas = document.getElementById('myChart');
+//   var ctx = canvas.getContext('2d');
+// }
