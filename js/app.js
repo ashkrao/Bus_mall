@@ -4,61 +4,51 @@ var images = ['bag.jpg', 'banana.jpg', 'bathroom.jpg', 'boots.jpg', 'breakfast.j
 var busMallItems = [];
 var backupItems = [];
 
-var showCount = 25;
-
-// Store constructor
+// Item constructor
 function Item (name, shown, clicked) {
   this.name = name;
   this.shown = shown;
   this.clicked = clicked;
 }
 
+// Generating bus mall items array
 function setup () {
   for(var i = 0 ; i < images.length ; i++) {
     busMallItems[i] = new Item(images[i], 0, 0);
   }
-}
 
+  updateShowCountElement();
+}
 setup();
 
 function imageClick(event) {
-  var picked = event.target.getAttribute('id');
+  var clickedImageName = event.target.getAttribute('id');
   event.preventDefault();
 
   for(var i = 0; i < backupItems.length; i++) {
-    if(backupItems[i].name == picked) {
+    if(backupItems[i].name == clickedImageName) {
       backupItems[i].clicked++;
-      if(showCount == 1)
-      {
-        event.stopPropagation();
-      } else {
-        showItemSet();
-      }
     }
+  }
+
+  decrementShowCount();
+  if(getShowCount() == 0) {
+
+    for(i = 0; i < backupItems.length ; i++) {
+      busMallItems.push(backupItems[i]);
+    }
+
+    showChart();
+    deleteShowCount();
+
+  } else {
+
+    showThreeImages();
+
   }
 }
 
-function renderBusMallImages (busMallItem) {
-  var busMallImagesParent = document.getElementById('busMallImagesParent');
-  var img = document.createElement('img');
-  img.setAttribute('src', 'images/' + busMallItem.name);
-  img.setAttribute('width','30%');
-  img.setAttribute('id', busMallItem.name);
-  img.addEventListener('click', imageClick);
-  busMallImagesParent.append(img);
-
-  busMallItem.shown++;
-}
-
-function pickRandomItem () {
-  var index = Math.floor(Math.random() * busMallItems.length);
-  return busMallItems[index];
-}
-
-function showItemSet() {
-  showCount--;
-  document.getElementById('remaining').innerHTML = showCount;
-
+function showThreeImages() {
   var item1 = pickRandomItem();
   busMallItems.splice(busMallItems.indexOf(item1), 1);
   var item2 = pickRandomItem();
@@ -66,8 +56,7 @@ function showItemSet() {
   var item3 = pickRandomItem();
   busMallItems.splice(busMallItems.indexOf(item3), 1);
 
-  var busMallImagesParent = document.getElementById('busMallImagesParent');
-  busMallImagesParent.innerHTML = '';
+  removeExistingImages();
 
   renderBusMallImages(item1);
   renderBusMallImages(item2);
@@ -82,9 +71,93 @@ function showItemSet() {
   backupItems[2] = item3;
 }
 
-showItemSet();
+showThreeImages();
 
-// function chart () {
-//   var canvas = document.getElementById('myChart');
-//   var ctx = canvas.getContext('2d');
-// }
+function pickRandomItem () {
+  var index = Math.floor(Math.random() * busMallItems.length);
+  return busMallItems[index];
+}
+
+function removeExistingImages() {
+  var busMallImagesParent = document.getElementById('busMallImagesParent');
+  busMallImagesParent.innerHTML = '';
+}
+
+function renderBusMallImages (item) {
+  var busMallImagesParent = document.getElementById('busMallImagesParent');
+  var img = document.createElement('img');
+  img.setAttribute('src', 'images/' + item.name);
+  img.setAttribute('width','30%');
+  img.setAttribute('id', item.name);
+  img.addEventListener('click', imageClick);
+  busMallImagesParent.append(img);
+
+  item.shown++;
+}
+
+function showChart() {
+  removeExistingImages();
+  var labels = [];
+  var data = [];
+  for(var i = 0; i < busMallItems.length; i++) {
+    labels[i] = busMallItems[i].name;
+    data[i] = busMallItems[i].clicked;
+  }
+
+  var container = document.getElementById('myChart');
+  var ctx = container.getContext('2d');
+  var myChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: '# of Votes',
+        data: data
+      }]
+    },
+    options: {
+      scales: {
+        yAxes: [{
+          ticks: {
+            beginAtZero:true
+          }
+        }]
+      }
+    }
+  });
+
+  myChart.update();
+}
+
+function decrementShowCount() {
+  var showCount = getShowCount();
+  showCount--;
+  createOrUpdateShowElement(showCount);
+  updateShowCountElement();
+}
+
+function getShowCount () {
+  var showCount = localStorage.getItem('showCount');
+  if (showCount !== null) {
+    showCount = parseInt(showCount);
+  } else {
+    showCount = 25;
+  }
+
+  return showCount;
+}
+
+function updateShowCountElement() {
+  document.getElementById('remaining').innerHTML = getShowCount();
+}
+
+function createOrUpdateShowElement(value) {
+  value = value.toString();
+  localStorage.setItem('showCount', value);
+  var showCount = localStorage.getItem('showCount');
+  return showCount;
+}
+
+function deleteShowCount() {
+  localStorage.removeItem('showCount');
+}
