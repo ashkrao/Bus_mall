@@ -100,20 +100,48 @@ function renderBusMallImages (item) {
 function showClickData() {
   var container = document.getElementById('clickData');
 
-  var list = document.createElement('ul');
-  container.appendChild(list);
+  var clickTable = document.createElement('table');
+  container.appendChild(clickTable);
+
+  var headerRow = document.createElement('tr');
+  clickTable.appendChild(headerRow);
+
+  var th = document.createElement('th');
+  headerRow.appendChild(th);
+  th.textContent = 'Image';
+
+  th = document.createElement('th');
+  headerRow.appendChild(th);
+  th.textContent = 'Shown';
+
+  th = document.createElement('th');
+  headerRow.appendChild(th);
+  th.textContent = 'Clicked';
+
+  th = document.createElement('th');
+  headerRow.appendChild(th);
+  th.textContent = 'Clicked/Shown %';
 
   for(var i = 0; i < busMallItems.length; i++)
   {
-    var itemData = busMallItems[i].name + ': Shown ' +
-      busMallItems[i].shown + ' time(s). Clicked ' +
-      busMallItems[i].clicked + ' times(s). Click/Show ratio ' +
-      parseFloat(busMallItems[i].clicked / busMallItems[i].shown).toFixed(2);
+    var tableRow = document.createElement('tr');
+    clickTable.appendChild(tableRow);
 
-    var li = document.createElement('li');
-    list.appendChild(li);
+    var td = document.createElement('td');
+    tableRow.appendChild(td);
+    td.textContent = busMallItems[i].name;
 
-    li.innerText = itemData;
+    td = document.createElement('td');
+    tableRow.appendChild(td);
+    td.textContent = busMallItems[i].shown;
+
+    td = document.createElement('td');
+    tableRow.appendChild(td);
+    td.textContent = busMallItems[i].clicked;
+
+    td = document.createElement('td');
+    tableRow.appendChild(td);
+    td.textContent = parseFloat((busMallItems[i].clicked / busMallItems[i].shown) * 100).toFixed(2);
   }
 }
 
