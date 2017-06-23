@@ -38,6 +38,8 @@ function imageClick(event) {
       busMallItems.push(backupItems[i]);
     }
 
+    removeExistingImages();
+    showClickData();
     showChart();
     deleteShowCount();
 
@@ -95,8 +97,27 @@ function renderBusMallImages (item) {
   item.shown++;
 }
 
+function showClickData() {
+  var container = document.getElementById('clickData');
+
+  var list = document.createElement('ul');
+  container.appendChild(list);
+
+  for(var i = 0; i < busMallItems.length; i++)
+  {
+    var itemData = busMallItems[i].name + ': Shown ' +
+      busMallItems[i].shown + ' time(s). Clicked ' +
+      busMallItems[i].clicked + ' times(s). Click/Show ratio ' +
+      parseFloat(busMallItems[i].clicked / busMallItems[i].shown).toFixed(2);
+
+    var li = document.createElement('li');
+    list.appendChild(li);
+
+    li.innerText = itemData;
+  }
+}
+
 function showChart() {
-  removeExistingImages();
   var labels = [];
   var data = [];
   for(var i = 0; i < busMallItems.length; i++) {
@@ -112,6 +133,8 @@ function showChart() {
       labels: labels,
       datasets: [{
         label: '# of Votes',
+        backgroundColor: 'rgb(222, 222, 144)',
+        borderColor: 'rgb(255, 111, 134)',
         data: data
       }]
     },
