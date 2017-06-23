@@ -87,12 +87,15 @@ function removeExistingImages() {
 
 function renderBusMallImages (item) {
   var busMallImagesParent = document.getElementById('busMallImagesParent');
+  var imgSpan = document.createElement('span');
+  imgSpan.setAttribute('class', 'prodImage');
+  busMallImagesParent.append(imgSpan);
+
   var img = document.createElement('img');
   img.setAttribute('src', 'images/' + item.name);
-  img.setAttribute('width','30%');
   img.setAttribute('id', item.name);
   img.addEventListener('click', imageClick);
-  busMallImagesParent.append(img);
+  imgSpan.append(img);
 
   item.shown++;
 }
