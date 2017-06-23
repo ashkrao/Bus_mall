@@ -38,6 +38,8 @@ function imageClick(event) {
       busMallItems.push(backupItems[i]);
     }
 
+    removeExistingImages();
+    showClickData();
     showChart();
     deleteShowCount();
 
@@ -95,8 +97,55 @@ function renderBusMallImages (item) {
   item.shown++;
 }
 
+function showClickData() {
+  var container = document.getElementById('clickData');
+
+  var clickTable = document.createElement('table');
+  container.appendChild(clickTable);
+
+  var headerRow = document.createElement('tr');
+  clickTable.appendChild(headerRow);
+
+  var th = document.createElement('th');
+  headerRow.appendChild(th);
+  th.textContent = 'Image';
+
+  th = document.createElement('th');
+  headerRow.appendChild(th);
+  th.textContent = 'Shown';
+
+  th = document.createElement('th');
+  headerRow.appendChild(th);
+  th.textContent = 'Clicked';
+
+  th = document.createElement('th');
+  headerRow.appendChild(th);
+  th.textContent = 'Clicked/Shown %';
+
+  for(var i = 0; i < busMallItems.length; i++)
+  {
+    var tableRow = document.createElement('tr');
+    clickTable.appendChild(tableRow);
+
+    var td = document.createElement('td');
+    tableRow.appendChild(td);
+    td.textContent = busMallItems[i].name;
+
+    td = document.createElement('td');
+    tableRow.appendChild(td);
+    td.textContent = busMallItems[i].shown;
+
+    td = document.createElement('td');
+    tableRow.appendChild(td);
+    td.textContent = busMallItems[i].clicked;
+
+    td = document.createElement('td');
+    tableRow.appendChild(td);
+    td.textContent = parseFloat((busMallItems[i].clicked / busMallItems[i].shown) * 100).toFixed(2);
+  }
+}
+
 function showChart() {
-  removeExistingImages();
   var labels = [];
   var data = [];
   for(var i = 0; i < busMallItems.length; i++) {
@@ -112,6 +161,8 @@ function showChart() {
       labels: labels,
       datasets: [{
         label: '# of Votes',
+        backgroundColor: 'rgb(222, 222, 144)',
+        borderColor: 'rgb(255, 111, 134)',
         data: data
       }]
     },
