@@ -27,21 +27,21 @@ function imageClick(event) {
   var clickedImageName = event.target.getAttribute('id');
   event.preventDefault();
 
-  var backupItems = getBackupItems();
-  for(var i = 0; i < backupItems.length; i++) {
-    backupItems[i].shown++;
-    if(backupItems[i].name == clickedImageName) {
-      backupItems[i].clicked++;
+  var displayedItems = getDisplayedItems();
+  for(var i = 0; i < displayedItems.length; i++) {
+    displayedItems[i].shown++;
+    if(displayedItems[i].name == clickedImageName) {
+      displayedItems[i].clicked++;
     }
   }
-  saveBackupItems(backupItems);
+  saveDisplayedItems(displayedItems);
 
   decrementAttempts();
   if(getAttempts() == 0) {
 
     var busMallItems = getItems();
-    for(i = 0; i < backupItems.length ; i++) {
-      busMallItems.push(backupItems[i]);
+    for(i = 0; i < displayedItems.length ; i++) {
+      busMallItems.push(displayedItems[i]);
     }
     saveItems(busMallItems);
 
@@ -50,7 +50,7 @@ function imageClick(event) {
     showChart();
     deleteAttempts();
     deleteItems();
-    deleteBackupItems();
+    deleteDisplayedItems();
   } else {
 
     showThreeImages();
@@ -74,21 +74,21 @@ function showThreeImages() {
   renderBusMallImages(item2);
   renderBusMallImages(item3);
 
-  var backupItems = getBackupItems();
-  if(backupItems == null) {
-    backupItems = [];
+  var displayedItems = getDisplayedItems();
+  if(displayedItems == null) {
+    displayedItems = [];
   }
 
-  for(var i = 0; i < backupItems.length ; i++) {
-    busMallItems.push(backupItems[i]);
+  for(var i = 0; i < displayedItems.length ; i++) {
+    busMallItems.push(displayedItems[i]);
   }
 
-  backupItems[0] = item1;
-  backupItems[1] = item2;
-  backupItems[2] = item3;
+  displayedItems[0] = item1;
+  displayedItems[1] = item2;
+  displayedItems[2] = item3;
 
   saveItems(busMallItems);
-  saveBackupItems(backupItems);
+  saveDisplayedItems(displayedItems);
 }
 
 showThreeImages();
@@ -249,12 +249,12 @@ function deleteItems() {
   localStorage.removeItem('items');
 }
 
-function saveBackupItems(backupItems) {
-  localStorage.setItem('backupItems', JSON.stringify(backupItems));
+function saveDisplayedItems(displayedItems) {
+  localStorage.setItem('displayedItems', JSON.stringify(displayedItems));
 }
 
-function getBackupItems() {
-  var items = localStorage.getItem('backupItems');
+function getDisplayedItems() {
+  var items = localStorage.getItem('displayedItems');
   if(items === null) {
     return null;
   } else {
@@ -262,6 +262,6 @@ function getBackupItems() {
   }
 }
 
-function deleteBackupItems() {
-  localStorage.removeItem('backupItems');
+function deleteDisplayedItems() {
+  localStorage.removeItem('displayedItems');
 }
