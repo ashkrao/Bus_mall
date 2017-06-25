@@ -1,7 +1,6 @@
 'use strict';
 
 var images = ['bag.jpg', 'banana.jpg', 'bathroom.jpg', 'boots.jpg', 'breakfast.jpg', 'bubblegum.jpg', 'chair.jpg', 'cthulhu.jpg','dog-duck.jpg','dragon.jpg','pen.jpg','pet-sweep.jpg','scissors.jpg','shark.jpg','sweep.png','tauntaun.jpg','unicorn.jpg','usb.gif','water-can.jpg','wine-glass.jpg'];
-var busMallItems = [];
 var backupItems = [];
 
 // Item constructor
@@ -13,10 +12,14 @@ function Item (name, shown, clicked) {
 
 // Generating bus mall items array
 function setup () {
-  for(var i = 0 ; i < images.length ; i++) {
-    busMallItems[i] = new Item(images[i], 0, 0);
+  var busMallItems = getItems();
+  if(busMallItems == null) {
+    busMallItems = [];
+    for(var i = 0 ; i < images.length ; i++) {
+      busMallItems[i] = new Item(images[i], 0, 0);
+    }
+    saveItems(busMallItems);
   }
-
   displayAttempts();
 }
 setup();
@@ -34,14 +37,17 @@ function imageClick(event) {
   decrementAttempts();
   if(getAttempts() == 0) {
 
+    var busMallItems = getItems();
     for(i = 0; i < backupItems.length ; i++) {
       busMallItems.push(backupItems[i]);
     }
+    saveItems(busMallItems);
 
     removeExistingImages();
     showClickTable();
     showChart();
     deleteAttempts();
+    deleteItems();
 
   } else {
 
@@ -51,11 +57,13 @@ function imageClick(event) {
 }
 
 function showThreeImages() {
-  var item1 = pickRandomItem();
+  var busMallItems = getItems();
+
+  var item1 = pickRandomItem(busMallItems);
   busMallItems.splice(busMallItems.indexOf(item1), 1);
-  var item2 = pickRandomItem();
+  var item2 = pickRandomItem(busMallItems);
   busMallItems.splice(busMallItems.indexOf(item2), 1);
-  var item3 = pickRandomItem();
+  var item3 = pickRandomItem(busMallItems);
   busMallItems.splice(busMallItems.indexOf(item3), 1);
 
   removeExistingImages();
@@ -71,11 +79,13 @@ function showThreeImages() {
   backupItems[0] = item1;
   backupItems[1] = item2;
   backupItems[2] = item3;
+
+  saveItems(busMallItems);
 }
 
 showThreeImages();
 
-function pickRandomItem () {
+function pickRandomItem (busMallItems) {
   var index = Math.floor(Math.random() * busMallItems.length);
   return busMallItems[index];
 }
@@ -125,6 +135,7 @@ function showClickTable() {
   headerRow.appendChild(th);
   th.textContent = 'Clicked/Shown %';
 
+  var busMallItems = getItems();
   for(var i = 0; i < busMallItems.length; i++)
   {
     var tableRow = document.createElement('tr');
@@ -151,6 +162,7 @@ function showClickTable() {
 function showChart() {
   var labels = [];
   var data = [];
+  var busMallItems = getItems();
   for(var i = 0; i < busMallItems.length; i++) {
     labels[i] = busMallItems[i].name;
     data[i] = busMallItems[i].clicked;
@@ -195,7 +207,7 @@ function getAttempts () {
   if (attempts !== null) {
     attempts = parseInt(attempts);
   } else {
-    attempts = 25;
+    attempts = 3;
   }
 
   return attempts;
@@ -214,14 +226,14 @@ function deleteAttempts() {
   localStorage.removeItem('attempts');
 }
 
-function saveItems() {
+function saveItems(busMallItems) {
   localStorage.setItem('items', JSON.stringify(busMallItems));
 }
 
 function getItems() {
   var items = localStorage.getItem('items');
   if(items === null) {
-    return [];
+    return null;
   } else {
     return JSON.parse(items);
   }
