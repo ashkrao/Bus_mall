@@ -1,7 +1,6 @@
 'use strict';
 
 var images = ['bag.jpg', 'banana.jpg', 'bathroom.jpg', 'boots.jpg', 'breakfast.jpg', 'bubblegum.jpg', 'chair.jpg', 'cthulhu.jpg','dog-duck.jpg','dragon.jpg','pen.jpg','pet-sweep.jpg','scissors.jpg','shark.jpg','sweep.png','tauntaun.jpg','unicorn.jpg','usb.gif','water-can.jpg','wine-glass.jpg'];
-var backupItems = [];
 
 // Item constructor
 function Item (name, shown, clicked) {
@@ -28,11 +27,14 @@ function imageClick(event) {
   var clickedImageName = event.target.getAttribute('id');
   event.preventDefault();
 
+  var backupItems = getBackupItems();
   for(var i = 0; i < backupItems.length; i++) {
+    backupItems[i].shown++;
     if(backupItems[i].name == clickedImageName) {
       backupItems[i].clicked++;
     }
   }
+  saveBackupItems(backupItems);
 
   decrementAttempts();
   if(getAttempts() == 0) {
@@ -48,7 +50,7 @@ function imageClick(event) {
     showChart();
     deleteAttempts();
     deleteItems();
-
+    deleteBackupItems();
   } else {
 
     showThreeImages();
@@ -72,6 +74,11 @@ function showThreeImages() {
   renderBusMallImages(item2);
   renderBusMallImages(item3);
 
+  var backupItems = getBackupItems();
+  if(backupItems == null) {
+    backupItems = [];
+  }
+
   for(var i = 0; i < backupItems.length ; i++) {
     busMallItems.push(backupItems[i]);
   }
@@ -81,6 +88,7 @@ function showThreeImages() {
   backupItems[2] = item3;
 
   saveItems(busMallItems);
+  saveBackupItems(backupItems);
 }
 
 showThreeImages();
@@ -106,8 +114,6 @@ function renderBusMallImages (item) {
   img.setAttribute('id', item.name);
   img.addEventListener('click', imageClick);
   imgSpan.append(img);
-
-  item.shown++;
 }
 
 function showClickTable() {
@@ -207,7 +213,7 @@ function getAttempts () {
   if (attempts !== null) {
     attempts = parseInt(attempts);
   } else {
-    attempts = 3;
+    attempts = 25;
   }
 
   return attempts;
@@ -243,14 +249,14 @@ function deleteItems() {
   localStorage.removeItem('items');
 }
 
-function saveBackupItems() {
+function saveBackupItems(backupItems) {
   localStorage.setItem('backupItems', JSON.stringify(backupItems));
 }
 
 function getBackupItems() {
   var items = localStorage.getItem('backupItems');
   if(items === null) {
-    return [];
+    return null;
   } else {
     return JSON.parse(items);
   }
