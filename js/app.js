@@ -17,7 +17,7 @@ function setup () {
     busMallItems[i] = new Item(images[i], 0, 0);
   }
 
-  updateShowCountElement();
+  displayAttempts();
 }
 setup();
 
@@ -31,17 +31,17 @@ function imageClick(event) {
     }
   }
 
-  decrementShowCount();
-  if(getShowCount() == 0) {
+  decrementAttempts();
+  if(getAttempts() == 0) {
 
     for(i = 0; i < backupItems.length ; i++) {
       busMallItems.push(backupItems[i]);
     }
 
     removeExistingImages();
-    showClickData();
+    showClickTable();
     showChart();
-    deleteShowCount();
+    deleteAttempts();
 
   } else {
 
@@ -100,7 +100,7 @@ function renderBusMallImages (item) {
   item.shown++;
 }
 
-function showClickData() {
+function showClickTable() {
   var container = document.getElementById('clickData');
 
   var clickTable = document.createElement('table');
@@ -183,35 +183,67 @@ function showChart() {
   myChart.update();
 }
 
-function decrementShowCount() {
-  var showCount = getShowCount();
-  showCount--;
-  createOrUpdateShowElement(showCount);
-  updateShowCountElement();
+function decrementAttempts() {
+  var attempts = getAttempts();
+  attempts--;
+  updateAttempts(attempts);
+  displayAttempts();// To display in HTML
 }
 
-function getShowCount () {
-  var showCount = localStorage.getItem('showCount');
-  if (showCount !== null) {
-    showCount = parseInt(showCount);
+function getAttempts () {
+  var attempts = localStorage.getItem('attempts');
+  if (attempts !== null) {
+    attempts = parseInt(attempts);
   } else {
-    showCount = 25;
+    attempts = 25;
   }
 
-  return showCount;
+  return attempts;
 }
 
-function updateShowCountElement() {
-  document.getElementById('remaining').innerHTML = getShowCount();
+function displayAttempts() {
+  document.getElementById('remaining').innerHTML = getAttempts();
 }
 
-function createOrUpdateShowElement(value) {
+function updateAttempts(value) {
   value = value.toString();
-  localStorage.setItem('showCount', value);
-  var showCount = localStorage.getItem('showCount');
-  return showCount;
+  localStorage.setItem('attempts', value);
 }
 
-function deleteShowCount() {
-  localStorage.removeItem('showCount');
+function deleteAttempts() {
+  localStorage.removeItem('attempts');
+}
+
+function saveItems() {
+  localStorage.setItem('items', JSON.stringify(busMallItems));
+}
+
+function getItems() {
+  var items = localStorage.getItem('items');
+  if(items === null) {
+    return [];
+  } else {
+    return JSON.parse(items);
+  }
+}
+
+function deleteItems() {
+  localStorage.removeItem('items');
+}
+
+function saveBackupItems() {
+  localStorage.setItem('backupItems', JSON.stringify(backupItems));
+}
+
+function getBackupItems() {
+  var items = localStorage.getItem('backupItems');
+  if(items === null) {
+    return [];
+  } else {
+    return JSON.parse(items);
+  }
+}
+
+function deleteBackupItems() {
+  localStorage.removeItem('backupItems');
 }
